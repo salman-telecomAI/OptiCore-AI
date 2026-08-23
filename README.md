@@ -17,3 +17,14 @@ twin, api and frontend folders are still empty. That's next.
 - twin/, api/, frontend/ - not started yet
 
 ## Running it
+pip install pydantic
+cd agents
+python alarm_agent.py
+python rca_agent.py
+
+
+## Next
+
+Simulation agent and orchestrator. Still need to figure out what confidence threshold makes sense for auto-proceed vs escalate, haven't decided yet, don't want to just guess a number.
+
+
