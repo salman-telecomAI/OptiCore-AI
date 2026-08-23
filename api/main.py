@@ -13,6 +13,7 @@ sys.path.append(str(Path(__file__).parent.parent / "agents"))
 sys.path.append(str(Path(__file__).parent.parent / "mediation"))
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from orchestrator import run_pipeline
 from mapper import normalise_ciena, _load
 
@@ -21,7 +22,7 @@ app = FastAPI(title="OptiCore AI - v1 demo API")
 
 @app.get("/")
 def root():
-    return {"status": "ok", "demo_endpoint": "/incidents/ring2-demo"}
+    return {"status": "ok", "demo_endpoint": "/incidents/ring2-demo", "ui": "/ui"}
 
 
 @app.get("/incidents/ring2-demo")
@@ -30,3 +31,7 @@ def ring2_demo():
     alarm = normalise_ciena(ciena_raw, "INC-0002")
     trace = run_pipeline([alarm])
     return trace
+
+
+frontend_dir = Path(__file__).parent.parent / "frontend"
+app.mount("/ui", StaticFiles(directory=frontend_dir, html=True), name="ui")
