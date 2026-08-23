@@ -1,10 +1,10 @@
-# OptiCore AI — Session 1
+# OptiCore AI - Session 1
 
 Just my working notes for now, not a proper README yet. Will clean this up once more of the pipeline is actually built.
 
 ## What's in here
 
-`/mediation` is the only real folder right now — vendor normalisation layer, took the whole first session. Everything else (`/agents`, `/twin`, `/api`, `/frontend`) is empty on purpose, they're for later sessions.
+`/mediation` is the only real folder right now,  vendor normalisation layer, took the whole first session. Everything else (`/agents`, `/twin`, `/api`, `/frontend`) is empty on purpose, they're for later sessions.
 
 Inside mediation:
 - `contracts.py` has the two data objects (NormalisedAlarmObject and SimulationResultObject), field names copied straight from my LLD doc so I don't drift from the spec while coding.
