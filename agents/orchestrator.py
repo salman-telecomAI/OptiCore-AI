@@ -6,8 +6,7 @@ autonomy-level policy (Section 4.3), maintains the decision trace for
 audit, and escalates rather than forcing the pipeline forward on low
 confidence.
 
-v1 wires: Alarm Agent -> RCA Agent -> Simulation Agent. Schedule and
-Report agents come in Session 4.
+Full 5-agent pipeline: Alarm -> RCA -> Simulation -> Schedule -> Report.
 """
 
 import sys
@@ -18,6 +17,8 @@ sys.path.append(str(Path(__file__).parent.parent / "mediation"))
 from alarm_agent import correlate
 from rca_agent import analyse
 from simulation_agent import simulate
+from schedule_agent import schedule
+from report_agent import close_incident
 
 
 def run_pipeline(alarms: list) -> dict:
@@ -27,12 +28,17 @@ def run_pipeline(alarms: list) -> dict:
     for incident in incidents:
         rca_result = analyse(incident)
         sim_result = simulate(incident, rca_result)
+        sim_dict = sim_result.model_dump()
+        schedule_result = schedule(incident, rca_result, sim_dict)
+        closure_report = close_incident(incident, rca_result, sim_dict, schedule_result)
 
         decision = {
             "incident_id": incident["incident_id"],
             "alarm": incident,
             "rca": rca_result,
-            "simulation": sim_result.model_dump(),
+            "simulation": sim_dict,
+            "schedule": schedule_result,
+            "closure_report": closure_report,
             "policy_decision": sim_result.recommendation,
         }
         trace.append(decision)
