@@ -1,0 +1,12 @@
+{
+  "faultId": "NSP-FLT-551029",
+  "neId": "1830-R3-N02",
+  "ring": "Ring3",
+  "probableCause": "signalDegrade",
+  "perceivedSeverity": "minor",
+  "aid": "ODU2-1-1-1",
+  "layerRate": "OTN",
+  "timeRaised": "2026-08-17T02:16:02Z",
+  "timeCleared": null,
+  "vendorNotes": "Nokia NSP native alarm object, ODUk SNCP degrade warning"
+}

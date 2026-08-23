@@ -1,0 +1,13 @@
+{
+  "alarmId": "NCE-2026-0817-0042",
+  "neName": "OSN-R1-N03",
+  "ring": "Ring1",
+  "alarmType": "R_LOS",
+  "alarmSeverity": "CRITICAL",
+  "objectLayer": "SDH",
+  "occurTime": "2026-08-17T02:14:31Z",
+  "clearedTime": null,
+  "extra": {
+    "vendorFormat": "Huawei NCE native alarm object, MML-derived"
+  }
+}

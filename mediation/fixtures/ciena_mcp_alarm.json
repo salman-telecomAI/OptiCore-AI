@@ -1,0 +1,12 @@
+{
+  "eventId": "MCP-ALM-88213",
+  "nodeId": "6500-R2-N05",
+  "ringName": "Ring2",
+  "condition": "LOS-P",
+  "severity": "CR",
+  "aid": "FAC-1-3-1",
+  "serviceLayer": "OTN",
+  "raisedAt": "2026-08-17T02:14:33.500Z",
+  "clearedAt": null,
+  "vendorNotes": "Ciena MCP native alarm object - fibre cut, span between working nodes, not at a gateway node"
+}
