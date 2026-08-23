@@ -1,29 +1,18 @@
-# OptiCore AI — Session 1 scaffold
+# OptiCore AI — Session 1
 
-Working notes only. This is not the public-facing README — that gets
-rewritten by hand at the end (Docs + Humanization session). Do not
-polish this file further with AI.
+Just my working notes for now, not a proper README yet. Will clean this up once more of the pipeline is actually built.
 
-## Layout
-- `/agents` — Alarm, RCA, Simulation, Schedule, Report agents + Orchestrator (later sessions)
-- `/mediation` — vendor normalisation layer (this session)
-- `/twin` — Batfish/ContainerLab/Suzieq integration (later sessions)
-- `/api` — FastAPI endpoints (later session)
-- `/frontend` — minimal single-page UI (later session)
+## What's in here
 
-## What's built so far (Session 1)
-- `mediation/contracts.py` — NormalisedAlarmObject, SimulationResultObject
-  (field names verbatim from LLD Section 6)
-- `mediation/fixtures/` — synthetic Huawei NCE, Ciena MCP, Nokia NSP alarms
-  - `ciena_mcp_alarm.json` is the Ring 2 fibre-cut demo scenario (LLD Section 5)
-- `mediation/mapper.py` — Steps 1-4 of the mediation layer (LLD 3.1):
-  collect native → map to common severity/field model → produce
-  NormalisedAlarmObject → keep native trace for audit
+`/mediation` is the only real folder right now — vendor normalisation layer, took the whole first session. Everything else (`/agents`, `/twin`, `/api`, `/frontend`) is empty on purpose, they're for later sessions.
 
-Run it: `cd mediation && python3 mapper.py`
+Inside mediation:
+- `contracts.py` has the two data objects (NormalisedAlarmObject and SimulationResultObject), field names copied straight from my LLD doc so I don't drift from the spec while coding.
+- `fixtures/` has three fake alarms, one per vendor (Huawei, Ciena, Nokia) — the Ciena one is the actual scenario I'm building the whole demo around, a fibre cut on Ring 2.
+- `mapper.py` takes all three vendor formats and turns them into one common shape. Ran it locally, output looked right.
 
-## Not built yet
-- Alarm/RCA/Simulation/Schedule/Report agents, Orchestrator, twin layers,
-  API, frontend, Docker, deploy — all in later sessions.
-- Layer 0 (physical/optical) is documented future work per Blueprint v1.0,
-  not built at all.
+## Next up
+
+Alarm + RCA agents. Haven't started those yet.
+
+TODO: still need to decide the exact confidence-score threshold for the L2→L3 escalation logic — not going to just make one up, want a number I can actually defend if someone asks about it.
