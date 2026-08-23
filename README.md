@@ -1,129 +1,59 @@
 # OptiCore AI
 
-Working repo for my Digital Twin / multi-agent network ops project. Still early days, updating this as I go instead of writing a big README upfront.
+A small multi-agent system for network operations, built while I move from 20 years in DWDM/OTN transmission engineering into AI architecture. This is my second AI project, after an earlier RAG assistant for NOC troubleshooting, and my first one that actually takes autonomous action instead of just answering questions.
 
-## Where things stand
+**Live demo:** https://opticore-ai-production.up.railway.app/ui
 
-All 5 agents are wired up now and running end to end on the Ring 2 fibre-cut scenario. Mediation layer normalises the three vendor formats, alarm agent correlates, RCA agent hypothesizes, simulation agent checks HERS protection and decides auto-proceed vs escalate, schedule agent works out the change window and whether a technician still needs dispatching (turns out yes, even when protection kicks in automatically, since someone still has to go fix the actual fibre), and report agent closes it all out into one audit trace.
+## What it does
 
-Also got a basic FastAPI endpoint running now, hitting /incidents/ring2-demo returns the whole incident trace as JSON. Tested it locally with curl, works.
+Five agents, one orchestrator, one job each. An alarm comes in from a vendor system, gets correlated into an incident, investigated for root cause, checked against a mocked digital twin before anything is recommended, scheduled if it needs a technician, and closed out with a full audit trail. All the steps I used to do manually at 2am during an outage.
 
-twin and frontend are still empty.
+The scenario it's built around is a fibre cut on a 3 ring network, one ring each on Huawei, Ciena, and Nokia gear. That's deliberate. A single vendor demo doesn't prove much, real networks are messier than that.
 
-## Folder layout
+## How it's put together
 
-- mediation/ - vendor normalisation (contracts.py, fixtures, mapper.py)
-- agents/ - all 5 agents plus orchestrator.py which wires them together
-- api/ - main.py, the FastAPI app
-- twin/, frontend/ - not started yet
-
-## Running it
-- twin/, frontend/ - not started yet
-
-## Running it
-
-pip install pydantic fastapi uvicorn
-cd agents
-python orchestrator.py
+mediation/ - normalises Huawei NCE, Ciena MCP, and Nokia NSP alarm formats into one shape
+agents/ - alarm, rca, simulation, schedule, report agents, plus the orchestrator
+api/ - fastapi app, serves the json endpoint and the dashboard
+frontend/ - the dashboard itself, plain html and js, no framework
+twin/ - empty for now, see limitations below
 
 
-Or to hit it as an actual API:
+Quick note since it trips people up: MCP shows up twice in this repo meaning two different things. Ciena MCP is their Manage, Control, Plan platform. Model Context Protocol is the AI industry standard for connecting agents to tools. Completely unrelated, just an unfortunate naming collision.
 
-cd api
-uvicorn main:app --reload
-
-then open http://127.0.0.1:8000/incidents/ring2-demo
-
-## Next
-
-Frontend to actually show this visually instead of raw JSON, then Docker and deployment. Confidence threshold is set at 80 for now, chose it because it's just under the 85 the Ring 2 case scores, wanted something defensible rather than a round number.
-
-Same as before: edit README on GitHub, paste this over, commit with your own short message.
-
-Session 4 done — full 5-agent pipeline working end-to-end with a real API on top. Ready for Session 5 (Frontend + Docker + Railway deploy) whenever you want to continue.
-
-Schedule agent
-PY 
-Report agent
-PY 
-Orchestrator
-PY 
-Main
-PY 
-
-check for step 4 point#1
-
-This is exactly right — all 5 expected changes are showing:
-
-agents\orchestrator.py — modified (yellow icon), diff shows old 3-agent wiring being replaced with the new 5-agent line, confirmed correct
-agents\report_agent.py — new (green +)
-agents\schedule_agent.py — new (green +)
-api\.gitkeep — deleted (red −), which is expected and fine, since it's being replaced by a real file
-api\main.py — new (green +)
-
-This matches Step 4/5 from the instructions exactly. Nothing looks wrong here — proceed:
-
-Type your commit message in the Summary box, something like:
-schedule and report agents, wired up the api
-Click Commit 5 files to main
-Then click Push origin (will appear top-right after committing)
-
-Go ahead — this is good to commit as-is.
-
-Got it — from now on I'll give you both fields explicitly, split out, whenever there's a commit to make.
-
-For the commit you're about to do right now:
-
-Summary:
-
-schedule and report agents, wired up the api
-
-Description:
-
-report agent closes out the full trace now, schedule agent handles change window plus technician dispatch. added a basic fastapi endpoint on top, tested it locally with curl and it returns the whole incident trace as json.
-
-Go ahead and paste those into their respective boxes, then Commit 5 files to main → Push origin.
-
-pushed the origin.. now ?
-
-Session 4 is fully pushed. Here's the README update for this session — same voice, split as summary/description since that's the new standard going forward.
-
-Where you paste this: GitHub → README.md → pencil icon → select all → paste this content:
-
-markdown
-# OptiCore AI
-
-Working repo for my Digital Twin / multi-agent network ops project. Still early days, updating this as I go instead of writing a big README upfront.
-
-## Where things stand
-
-All 5 agents are wired up now and running end to end on the Ring 2 fibre-cut scenario. Mediation layer normalises the three vendor formats, alarm agent correlates, RCA agent hypothesizes, simulation agent checks HERS protection and decides auto-proceed vs escalate, schedule agent works out the change window and whether a technician still needs dispatching (turns out yes, even when protection kicks in automatically, since someone still has to go fix the actual fibre), and report agent closes it all out into one audit trace.
-
-Also got a basic FastAPI endpoint running now, hitting /incidents/ring2-demo returns the whole incident trace as JSON. Tested it locally with curl, works.
-
-twin and frontend are still empty.
-
-## Folder layout
-
-- mediation/ - vendor normalisation (contracts.py, fixtures, mapper.py)
-- agents/ - all 5 agents plus orchestrator.py which wires them together
-- api/ - main.py, the FastAPI app
-- twin/, frontend/ - not started yet
-
-## Running it
+## Running it locally
 
 pip install pydantic fastapi uvicorn
 cd agents
 python orchestrator.py
 
 
-Or to hit it as an actual API:
-
+Or as an actual API:
 cd api
 uvicorn main:app --reload
 
-then open http://127.0.0.1:8000/incidents/ring2-demo
 
-## Next
+Then open `http://127.0.0.1:8000/ui`
 
-Frontend to actually show this visually instead of raw JSON, then Docker and deployment. Confidence threshold is set at 80 for now, chose it because it's just under the 85 the Ring 2 case scores, wanted something defensible rather than a round number.
+## What's real and what's mocked
+
+Being upfront about this rather than letting it look more finished than it is:
+
+- Alarm correlation, RCA reasoning, the orchestrator's auto-proceed/escalate decision, and the full audit trail are all real logic, tested end to end.
+- The RCA agent's RAG lookup is currently a stub with hardcoded context. Wiring it to my actual NOC RAG Assistant is next.
+- The digital twin's topology/emulation layer is a mocked JSON result, not a live ContainerLab run. That's a v1.1 follow up, not a blocker for now.
+- The physical/optical layer (OSNR, impairments) isn't built at all yet, it's documented as future work.
+- The confidence threshold for auto-proceed vs escalate is hardcoded at 80. I picked that because it sits just under the 85 the demo scenario scores, wanted something I could actually defend rather than a round number.
+- Only tested against the one Ring 2 scenario so far, not the full topology.
+
+## Hosting
+
+Running on Railway right now using the free trial credit, which is fine for a personal project but isn't meant to be permanent. If it ever goes quiet, it's because the credit ran out, not because the project's abandoned. Render's free tier is the fallback if that happens, same Dockerfile, one line change.
+
+## Where this is going
+
+Wiring the real RAG assistant into the RCA agent, then a real ContainerLab run for the emulation layer. No fixed timeline, this is something I chip away at alongside work.
+
+---
+
+TODO: the schedule agent's technician dispatch logic only checks for "fibre cut" as a keyword in the RCA hypothesis right now, which is a bit brittle. Works for this scenario, would need generalising before a second scenario gets added.
