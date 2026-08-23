@@ -1,29 +1,19 @@
-# OptiCore AI — Session 1 scaffold
+# OptiCore AI
 
-Working notes only. This is not the public-facing README — that gets
-rewritten by hand at the end (Docs + Humanization session). Do not
-polish this file further with AI.
+Working repo for my Digital Twin / multi-agent network ops project. Still early days, updating this as I go instead of writing a big README upfront.
 
-## Layout
-- `/agents` — Alarm, RCA, Simulation, Schedule, Report agents + Orchestrator (later sessions)
-- `/mediation` — vendor normalisation layer (this session)
-- `/twin` — Batfish/ContainerLab/Suzieq integration (later sessions)
-- `/api` — FastAPI endpoints (later session)
-- `/frontend` — minimal single-page UI (later session)
+## Where things stand
 
-## What's built so far (Session 1)
-- `mediation/contracts.py` — NormalisedAlarmObject, SimulationResultObject
-  (field names verbatim from LLD Section 6)
-- `mediation/fixtures/` — synthetic Huawei NCE, Ciena MCP, Nokia NSP alarms
-  - `ciena_mcp_alarm.json` is the Ring 2 fibre-cut demo scenario (LLD Section 5)
-- `mediation/mapper.py` — Steps 1-4 of the mediation layer (LLD 3.1):
-  collect native → map to common severity/field model → produce
-  NormalisedAlarmObject → keep native trace for audit
+Mediation layer is done. It takes alarms from three different vendor formats (Huawei, Ciena, Nokia, all fake/synthetic for now) and turns them into one common shape. Tested it against a Ciena fibre-cut scenario on Ring 2, which is what most of this repo is built around right now.
 
-Run it: `cd mediation && python3 mapper.py`
+On top of that, alarm correlation and root cause agents are working too. Alarm agent groups related alarms into one incident, then RCA agent picks that up and returns a hypothesis. Right now it's hardcoded logic plus a stub for the real RAG lookup, not a live LLM call yet. Ran both end to end on the Ring 2 case and got a sensible answer out.
 
-## Not built yet
-- Alarm/RCA/Simulation/Schedule/Report agents, Orchestrator, twin layers,
-  API, frontend, Docker, deploy — all in later sessions.
-- Layer 0 (physical/optical) is documented future work per Blueprint v1.0,
-  not built at all.
+twin, api and frontend folders are still empty. That's next.
+
+## Folder layout
+
+- mediation/ - vendor normalisation (contracts.py, fixtures, mapper.py)
+- agents/ - alarm_agent.py and rca_agent.py live here now
+- twin/, api/, frontend/ - not started yet
+
+## Running it
